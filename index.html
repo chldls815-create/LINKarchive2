@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Archive</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #111111; --text-muted: #767676;
+            --border: #e5e5e5; --hover-bg: #f9f9f9;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg); color: var(--text); padding: 40px 20px; line-height: 1.5;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        header { margin-bottom: 32px; }
+        h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 16px; }
+
+        .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
+        .input-box {
+            padding: 12px 14px; font-size: 14px; border: 1px solid var(--border);
+            background: transparent; color: var(--text); outline: none; transition: border-color 0.2s;
+        }
+        .input-box:focus { border-color: var(--text); }
+        #new-title { flex: 1; }
+        #new-url { flex: 2; }
+        #add-btn {
+            padding: 0 20px; background: var(--text); color: var(--bg); border: none;
+            font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+        }
+        #add-btn:hover { opacity: 0.8; }
+
+        #search {
+            width: 100%; padding: 14px 16px; font-size: 15px; border: 1px solid var(--text);
+            background: transparent; color: var(--text); outline: none;
+        }
+        #search::placeholder { color: var(--text-muted); }
+
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 13px; font-weight: 600; letter-spacing: 0.5px; color: var(--text-muted);
+            margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .link-list { display: flex; flex-direction: column; gap: 8px; }
+        .link-item {
+            display: flex; align-items: center; padding: 14px 16px; border: 1px solid var(--border);
+            background-color: var(--bg); transition: background-color 0.15s, border-color 0.15s;
+        }
+        .link-item:hover { background-color: var(--hover-bg); border-color: var(--text); }
+
+        .favicon {
+            width: 16px; height: 16px; margin-right: 14px; object-fit: contain;
+            filter: grayscale(100%); transition: filter 0.15s ease;
+        }
+        .link-item:hover .favicon { filter: grayscale(0%); }
+
+        .link-anchor {
+            flex-grow: 1; color: var(--text); text-decoration: none; font-size: 15px;
+            font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+
+        .action-btn {
+            background: none; border: none; cursor: pointer; font-size: 16px;
+            color: #d1d1d1; padding: 4px; display: flex; align-items: center; margin-left: 8px;
+        }
+        .action-btn.star.active { color: var(--text); }
+        .action-btn.delete:hover { color: #ff4444; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Link Archive</h1>
+        <div class="input-group">
+            <input type="text" id="new-title" class="input-box" placeholder="사이트 이름">
+            <input type="text" id="new-url" class="input-box" placeholder="주소 (예: github.com)">
+            <button id="add-btn">추가</button>
+        </div>
+        <input type="text" id="search" placeholder="검색어를 입력하세요...">
+    </header>
+
+    <div id="favorites-section" class="section hidden">
+        <div class="section-title">Favorites ★</div>
+        <div id="favorites-list" class="link-list"></div>
+    </div>
+
+    <div class="section category-section" id="custom-section">
+        <div class="section-title">내 링크</div>
+        <div class="link-list" id="custom-list"></div>
+    </div>
+
+    <div class="section category-section">
+        <div class="section-title">주막 임무 알리미</div>
+        <div class="link-list">
+            <div class="link-item" data-url="google.com">
+                <img class="favicon" src="https://chldls815-create.github.io/gersangcalendar/" alt="">
+                <a href="https://chldls815-create.github.io/gersangcalendar/" target="_blank" class="link-anchor">주막임무 알리미</a>
+                <button class="action-btn star">★</button>
+            </div>
+<div class="section-title">편의 기능</div>
+        <div class="link-list">
+            <div class="link-item" data-url="geota.co.kr/gersang/yukeuijeon?serverId=1">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=geota.co.kr&sz=32" alt="">
+                <a href="https://geota.co.kr/gersang/yukeuijeon?serverId=1" target="_blank" class="link-anchor">육의전 검색기</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="geota.co.kr/gersang/satongpaldal?serverId=1">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=geota.co.kr&sz=32" alt="">
+                <a href="https://geota.co.kr/gersang/satongpaldal?serverId=1" target="_blank" class="link-anchor">사통발달 검색기</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="geota.co.kr/gersang/calculator/bonus">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=geota.co.kr&sz=32" alt="">
+                <a href="https://geota.co.kr/gersang/calculator/bonus" target="_blank" class="link-anchor">보텟 계산기</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="geota.co.kr/gersang/calculator/mercenary?serverId=1">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=geota.co.kr&sz=32" alt="">
+                <a href="https://geota.co.kr/gersang/calculator/mercenary?serverId=1" target="_blank" class="link-anchor">용병 제작 계산기</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="geota.co.kr/gersang/calculator/item?serverId=1">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=geota.co.kr&sz=32" alt="">
+                <a href="https://geota.co.kr/gersang/calculator/item?serverId=1" target="_blank" class="link-anchor">아이템 제작 비용 계산기</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="geota.co.kr/gersang/calculator/store?serverId=1">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=geota.co.kr&sz=32" alt="">
+                <a href="https://geota.co.kr/gersang/calculator/store?serverId=1" target="_blank" class="link-anchor">상재 계산기</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="gerniverse.app/victory-nations">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/victory-nations" target="_blank" class="link-anchor">승전국 현황</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="gerniverse.app/quest">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/quest" target="_blank" class="link-anchor">퀘스트</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="gerniverse.app/item">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/item" target="_blank" class="link-anchor">아이템</a>
+                <button class="action-btn star">★</button>
+            </div>
+		<div class="section-title">컨텐츠</div>
+            <div class="link-item" data-url="gerniverse.app/soul-village/ancestor-blessing">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/soul-village/ancestor-blessing" target="_blank" class="link-anchor">선조의 가호 비용</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="gerniverse.app/saingeom">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/saingeom" target="_blank" class="link-anchor">삼/사인검</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="gerniverse.app/inyeon">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/inyeon" target="_blank" class="link-anchor">인연</a>
+                <button class="action-btn star">★</button>
+            </div>
+            <div class="link-item" data-url="gerniverse.app/mystery">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/mystery" target="_blank" class="link-anchor">수수께끼</a>
+                <button class="action-btn star">★</button>
+            </div>
+		<div class="section-title">컨텐츠</div>
+			<div class="link-item" data-url="https://gerniverse.app/monster-hunt-analytics">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/monster-hunt-analytics" target="_blank" class="link-anchor">몬스터 사냥 분석기</a>
+                <button class="action-btn star">★</button>
+            </div>
+				<div class="link-item" data-url="https://gerniverse.app/item-farming-analytics">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/item-farming-analytics" target="_blank" class="link-anchor">아이템 파밍 분석기</a>
+                <button class="action-btn star">★</button>
+            </div>
+				<div class="link-item" data-url="https://gerniverse.app/legendary-equipments-analytics">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=gerniverse.app&sz=32" alt="">
+                <a href="https://gerniverse.app/legendary-equipments-analytics" target="_blank" class="link-anchor">전설장수 장비 강화 분석</a>
+                <button class="action-btn star">★</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('search');
+    const customList = document.getElementById('custom-list');
+    const favoritesSection = document.getElementById('favorites-section');
+    const favoritesList = document.getElementById('favorites-list');
+    const addBtn = document.getElementById('add-btn');
+
+    // 1. 저장소 데이터 불러오기
+    let savedLinks = JSON.parse(localStorage.getItem('myLinks')) || [];
+    let savedFavorites = JSON.parse(localStorage.getItem('myFavorites')) || []; // 즐겨찾기 상태 저장용 배열
+
+    // 2. 커스텀 링크 화면에 그리기
+    function renderCustomLinks() {
+        customList.innerHTML = '';
+        savedLinks.forEach((link, index) => {
+            const div = document.createElement('div');
+            div.className = 'link-item';
+            div.setAttribute('data-url', link.url);
+            
+            // 이 링크가 즐겨찾기에 포함되어 있는지 확인
+            const isStarred = savedFavorites.includes(link.url) ? 'active' : '';
+
+            div.innerHTML = `
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=${link.url}&sz=32" alt="">
+                <a href="https://${link.url}" target="_blank" class="link-anchor">${link.title}</a>
+                <button class="action-btn star ${isStarred}">★</button>
+                <button class="action-btn delete" data-index="${index}">×</button>
+            `;
+            customList.appendChild(div);
+        });
+    }
+
+    // 3. 기본 링크들의 별점 상태 복구 (초기 로드용)
+    function restoreDefaultFavorites() {
+        document.querySelectorAll('.category-section .link-item').forEach(item => {
+            const url = item.getAttribute('data-url');
+            if(savedFavorites.includes(url)) {
+                const starBtn = item.querySelector('.star');
+                if(starBtn) starBtn.classList.add('active');
+            }
+        });
+    }
+
+    // 4. 이벤트 연결 (추가, 삭제, 즐겨찾기)
+    function attachEvents() {
+        // 기존 이벤트 리스너가 중복 등록되지 않도록 최상위에서 이벤트 위임(Event Delegation) 방식 사용
+        document.body.addEventListener('click', function(e) {
+            
+            // ★ 즐겨찾기 버튼 클릭 시
+            if(e.target.classList.contains('star')) {
+                const item = e.target.closest('.link-item');
+                const url = item.getAttribute('data-url');
+                
+                // 즐겨찾기 상단 목록에서 누른 경우 원본 리스트의 별도 함께 해제/선택 처리
+                const allMatchingStars = document.querySelectorAll(`.link-item[data-url="${url}"] .star`);
+                
+                let isActive = false;
+                allMatchingStars.forEach(star => {
+                    star.classList.toggle('active');
+                    if(star.classList.contains('active')) isActive = true;
+                });
+
+                // 데이터베이스(로컬 스토리지) 업데이트
+                if (isActive && !savedFavorites.includes(url)) {
+                    savedFavorites.push(url);
+                } else if (!isActive) {
+                    savedFavorites = savedFavorites.filter(fav => fav !== url);
+                }
+                localStorage.setItem('myFavorites', JSON.stringify(savedFavorites));
+                
+                updateFavoritesUI();
+            }
+
+            // × 삭제 버튼 클릭 시
+            if(e.target.classList.contains('delete')) {
+                const index = e.target.getAttribute('data-index');
+                const urlToDelete = savedLinks[index].url;
+
+                if(confirm('이 링크를 삭제하시겠습니까?')) {
+                    // 1. 내 링크 목록에서 삭제
+                    savedLinks.splice(index, 1);
+                    localStorage.setItem('myLinks', JSON.stringify(savedLinks));
+                    
+                    // 2. 만약 즐겨찾기에 등록된 상태였다면 즐겨찾기 데이터에서도 삭제
+                    savedFavorites = savedFavorites.filter(fav => fav !== urlToDelete);
+                    localStorage.setItem('myFavorites', JSON.stringify(savedFavorites));
+
+                    renderCustomLinks();
+                    updateFavoritesUI();
+                }
+            }
+        });
+    }
+
+    // 5. 상단 즐겨찾기 영역 업데이트
+    function updateFavoritesUI() {
+        favoritesList.innerHTML = '';
+        const activeItems = [];
+        
+        // 고유한 즐겨찾기 항목 추출 (중복 렌더링 방지)
+        document.querySelectorAll('.category-section .link-item').forEach(item => {
+            const url = item.getAttribute('data-url');
+            const starBtn = item.querySelector('.star');
+            
+            if(starBtn && starBtn.classList.contains('active')) {
+                // 이미 추가된 URL인지 확인
+                if(!activeItems.find(i => i.url === url)) {
+                    activeItems.push({
+                        url: url,
+                        title: item.querySelector('.link-anchor').innerText
+                    });
+                }
+            }
+        });
+
+        if (activeItems.length > 0) {
+            favoritesSection.classList.remove('hidden');
+            activeItems.forEach(data => {
+                const favItem = document.createElement('div');
+                favItem.className = 'link-item';
+                favItem.setAttribute('data-url', data.url);
+                favItem.innerHTML = `
+                    <img class="favicon" src="https://www.google.com/s2/favicons?domain=${data.url}&sz=32" alt="">
+                    <a href="https://${data.url}" target="_blank" class="link-anchor">${data.title}</a>
+                    <button class="action-btn star active">★</button>
+                `;
+                favoritesList.appendChild(favItem);
+            });
+        } else {
+            favoritesSection.classList.add('hidden');
+        }
+    }
+
+    // 6. 링크 추가 버튼
+    addBtn.addEventListener('click', () => {
+        const titleInput = document.getElementById('new-title');
+        const urlInput = document.getElementById('new-url');
+        
+        let title = titleInput.value.trim();
+        let url = urlInput.value.trim().replace(/^https?:\/\//, '');
+
+        if(!title || !url) {
+            alert('사이트 이름과 주소를 모두 입력해주세요.');
+            return;
+        }
+
+        savedLinks.push({ title, url });
+        localStorage.setItem('myLinks', JSON.stringify(savedLinks));
+        
+        titleInput.value = '';
+        urlInput.value = '';
+        renderCustomLinks();
+        updateFavoritesUI();
+    });
+
+    // 7. 검색 기능
+    searchInput.addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase().trim();
+        document.querySelectorAll('.category-section').forEach(section => {
+            let hasVisibleItem = false;
+            section.querySelectorAll('.link-item').forEach(item => {
+                const text = item.querySelector('.link-anchor').innerText.toLowerCase();
+                if (text.includes(term)) {
+                    item.classList.remove('hidden');
+                    hasVisibleItem = true;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+            section.classList.toggle('hidden', !hasVisibleItem && term !== '');
+        });
+    });
+
+    // --- 초기 실행 ---
+    renderCustomLinks();         // 내가 추가한 링크 불러오기
+    restoreDefaultFavorites();   // 기본 링크들의 즐겨찾기 별 상태 복구
+    updateFavoritesUI();         // 상단 즐겨찾기 패널 그리기
+    attachEvents();              // 클릭 이벤트 켜기
+
+</script>
+</body>
+</html>
